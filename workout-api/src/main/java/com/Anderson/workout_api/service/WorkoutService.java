@@ -18,4 +18,18 @@ public class WorkoutService {
         return this.workoutRepository.findAll();
     }
 
+    public Workout getWorkout(Long id){
+        return workoutRepository.getReferenceById(id);
+    }
+
+    public Workout createWorkout(Workout workout) {
+        return workoutRepository.save(workout);
+    }
+
+//    public Workout updateWorkout(Workout workout){
+//        return workoutRepository.
+//    }
+
+
+
 }
