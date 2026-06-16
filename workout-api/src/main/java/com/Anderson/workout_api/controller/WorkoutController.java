@@ -1,10 +1,11 @@
 package com.Anderson.workout_api.controller;
 
+import com.Anderson.workout_api.dto.WorkoutRequest;
+import com.Anderson.workout_api.dto.WorkoutResponse;
 import com.Anderson.workout_api.entity.Workout;
 import com.Anderson.workout_api.service.WorkoutService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,24 +22,24 @@ public class WorkoutController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Workout>> getAllWorkouts() {
+    public ResponseEntity<List<WorkoutResponse>> getAllWorkouts() {
         return ResponseEntity.ok(workoutService.getAllWorkouts());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Workout> getWorkout(@PathVariable Long id){
+    public ResponseEntity<WorkoutResponse> getWorkout(@PathVariable Long id){
         return ResponseEntity.ok(workoutService.getWorkout(id));
     }
 
     @PostMapping
-    public ResponseEntity<Workout> createWorkout(@Valid @RequestBody Workout workout) {
-        Workout createdWorkout = workoutService.createWorkout(workout);
+    public ResponseEntity<WorkoutResponse> createWorkout(@Valid @RequestBody WorkoutRequest request) {
+        WorkoutResponse createdWorkout = workoutService.createWorkout(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdWorkout);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Workout> updateWorkout(@PathVariable Long id, @Valid @RequestBody Workout workout) {
-        Workout updatedWorkout = workoutService.updateWorkout(id, workout);
+    public ResponseEntity<WorkoutResponse> updateWorkout(@PathVariable Long id, @Valid @RequestBody WorkoutRequest request) {
+        WorkoutResponse updatedWorkout = workoutService.updateWorkout(id, request);
         return ResponseEntity.ok(updatedWorkout);
     }
 

@@ -1,5 +1,7 @@
 package com.Anderson.workout_api.service;
 
+import com.Anderson.workout_api.dto.WorkoutRequest;
+import com.Anderson.workout_api.dto.WorkoutResponse;
 import com.Anderson.workout_api.entity.Workout;
 import com.Anderson.workout_api.exception.WorkoutNotFoundException;
 import com.Anderson.workout_api.repository.WorkoutRepository;
@@ -17,28 +19,69 @@ public class WorkoutService {
         this.workoutRepository = workoutRepository;
     }
 
-    public List<Workout> getAllWorkouts(){
-        return this.workoutRepository.findAll();
+    public List<WorkoutResponse> getAllWorkouts(){
+        return this.workoutRepository.findAll()
+                .stream()
+                .map(workout -> new WorkoutResponse(
+                        workout.getId(),
+                        workout.getStartTime(),
+                        workout.getEndTime(),
+                        workout.getSets(),
+                        workout.getTotalRestSeconds(),
+                        workout.getTotalWorkSeconds()
+                ))
+                .toList();
     }
 
-    public Workout getWorkout(Long id){
-        Workout workout = workoutRepository.findById(id).orElseThrow();
-        return workout;
+    public WorkoutResponse getWorkout(Long id){
+        Workout workout = workoutRepository.findById(id).orElseThrow(() -> new WorkoutNotFoundException(id));
+        return new WorkoutResponse(
+                workout.getId(),
+                workout.getStartTime(),
+                workout.getEndTime(),
+                workout.getSets(),
+                workout.getTotalRestSeconds(),
+                workout.getTotalWorkSeconds()
+        );
     }
 
-    public Workout createWorkout(Workout workout) {
-        return workoutRepository.save(workout);
+    public WorkoutResponse createWorkout(WorkoutRequest request) {
+
+        Workout workout = new Workout();
+        workout.setStartTime(request.getStartTime());
+        workout.setEndTime(request.getEndTime());
+        workout.setSets(request.getSets());
+        workout.setTotalRestSeconds(request.getTotalRestSeconds());
+        workout.setTotalWorkSeconds(request.getTotalWorkSeconds());
+        Workout savedWorkout = workoutRepository.save(workout);
+
+        return new WorkoutResponse(
+                savedWorkout.getId(),
+                savedWorkout.getStartTime(),
+                savedWorkout.getEndTime(),
+                savedWorkout.getSets(),
+                savedWorkout.getTotalRestSeconds(),
+                savedWorkout.getTotalWorkSeconds()
+        );
     }
 
-    public Workout updateWorkout(Long id, Workout workout){
-        Workout existingWorkout = workoutRepository.findById(id).orElseThrow();
-        existingWorkout.setStartTime(workout.getStartTime());
-        existingWorkout.setEndTime(workout.getEndTime());
-        existingWorkout.setSets(workout.getSets());
-        existingWorkout.setTotalRestSeconds(workout.getTotalRestSeconds());
-        existingWorkout.setTotalWorkSeconds(workout.getTotalWorkSeconds());
+    public WorkoutResponse updateWorkout(Long id, WorkoutRequest request){
+        Workout existingWorkout = workoutRepository.findById(id).orElseThrow(() -> new WorkoutNotFoundException(id));
+        existingWorkout.setStartTime(request.getStartTime());
+        existingWorkout.setEndTime(request.getEndTime());
+        existingWorkout.setSets(request.getSets());
+        existingWorkout.setTotalRestSeconds(request.getTotalRestSeconds());
+        existingWorkout.setTotalWorkSeconds(request.getTotalWorkSeconds());
+        Workout savedWorkout = workoutRepository.save(existingWorkout);
 
-        return workoutRepository.save(existingWorkout);
+        return new WorkoutResponse(
+                savedWorkout.getId(),
+                savedWorkout.getStartTime(),
+                savedWorkout.getEndTime(),
+                savedWorkout.getSets(),
+                savedWorkout.getTotalRestSeconds(),
+                savedWorkout.getTotalWorkSeconds()
+        );
     }
 
     public void deleteWorkout(Long id) {
